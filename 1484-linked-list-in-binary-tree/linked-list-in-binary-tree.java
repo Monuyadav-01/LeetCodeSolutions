@@ -23,28 +23,28 @@
  *     }
  * }
  */
-// class Solution {
-//     public boolean isSubPath(ListNode head, TreeNode root) {
-//         if(root==null) return false;
-//         if(head==null) return true;
-//         return( helper(head,root) || isSubPath(head, root.left) || isSubPath(head, root.right));
-//     }
-//     public boolean helper(ListNode head, TreeNode root){
-//        if(root==null) return false;
-//         if(head==null) return true;
-//         return (head.val == root.val) && (helper(head.next ,root.left) || helper(head.next, root.right));
-//     }
-// }
 class Solution {
     public boolean isSubPath(ListNode head, TreeNode root) {
-        if (head == null) return true;
-        if (root == null) return false;
-        return (isStartPath(head, root) || isSubPath(head, root.left) || isSubPath(head, root.right));
+         if (head == null) return true;
+         if (root == null) return false;
+        return( helper(head,root) || isSubPath(head, root.left) || isSubPath(head, root.right));
     }
-
-    private boolean isStartPath(ListNode head, TreeNode root) {
-        if (head == null) return true;
-        if (root == null) return false;
-        return (head.val == root.val) && (isStartPath(head.next, root.left) || isStartPath(head.next, root.right));
+    public boolean helper(ListNode head, TreeNode root){
+      if (head == null) return true;
+      if (root == null) return false;
+        return (head.val == root.val) && (helper(head.next ,root.left) || helper(head.next, root.right));
     }
 }
+// class Solution {
+//     public boolean isSubPath(ListNode head, TreeNode root) {
+//         if (head == null) return true;
+//         if (root == null) return false;
+//         return (isStartPath(head, root) || isSubPath(head, root.left) || isSubPath(head, root.right));
+//     }
+
+//     private boolean isStartPath(ListNode head, TreeNode root) {
+//         if (head == null) return true;
+//         if (root == null) return false;
+//         return (head.val == root.val) && (isStartPath(head.next, root.left) || isStartPath(head.next, root.right));
+//     }
+// }
