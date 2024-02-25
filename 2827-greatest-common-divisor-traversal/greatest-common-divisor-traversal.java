@@ -1,81 +1,59 @@
 class Solution {
+
+    int[] parent;
+    int[] count;
+
+    int max;
     public boolean canTraverseAllPairs(int[] nums) {
-        int MAX = 100000;
-        int N = nums.length;
-        boolean[] has = new boolean[MAX + 1];
-        for (int x: nums) {
-            has[x] = true;
-        }
+        for (int x : nums) 
+            max = Math.max(max, x);
 
-        // edge cases
-        if (N == 1) {
-            return true;
-        }
-        if (has[1]) {
-            return false;
-        }
+        int n = nums.length;
+        parent = new int[max +1];
+        count = new int[max+1];
 
-        // the general solution
-        int[] sieve = new int[MAX + 1];
-        for (int d = 2; d <= MAX; d++) {
-            if (sieve[d] == 0) {
-                for (int v = d; v <= MAX; v += d) {
-                    sieve[v] = d;
+        if(n == 1) return true;
+
+        for(int i = 0; i < n; i++)
+            if(nums[i]==1) return false;
+        
+        for(int i = 1; i <= max; i++)
+            parent[i] = i;
+        
+        for(int x:nums)
+            count[x]++;
+        
+
+        boolean[] visited = new boolean[max+1];
+
+        for(int i = 2; i* 2 <= max; i++){
+            if(visited[i]) continue;
+            for(int j = i+i; j <= max; j+=i){
+                visited[j] = true;
+                if(count[j]!=0){
+                    union(i, j);
                 }
             }
         }
 
-        DSU union = new DSU(2 * MAX + 1);
-        for (int x: nums) {
-            int val = x;
-            while (val > 1) {
-                int prime = sieve[val];
-                int root = prime+MAX;
-                if (union.find(root) != union.find(x)) {
-                    union.merge(root, x);
-                }
-                while (val % prime == 0) {
-                    val /= prime;
-                }
-            }
-        }
+        int p = find(nums[0]);
+        for(int i = 1; i < n; i++)
+            if(find(nums[i]) != p) return false;
+        
+        return true;
+    }
 
-        int cnt = 0;
-        for (int i=2; i <= MAX; i++) {
-            if (has[i] && union.find(i) == i) {
-                cnt++;
-            }
-        }
-        return cnt == 1;
+    private int find(int x) {
+        return parent[x] == x ? x : (parent[x] = find(parent[x]));
     }
-}
-class DSU {
-    public int[] dsu;
-    public int[] size;
-
-    public DSU(int N) {
-        dsu = new int[N + 1];
-        size = new int[N + 1];
-        for (int i = 0; i <= N; i++) {
-            dsu[i] = i;
-            size[i] = 1;
-        }
-    }
-    public int find(int x) {
-        return dsu[x] == x ? x : (dsu[x] = find(dsu[x]));
-    }
-    public void merge(int x, int y) {
-        int fx = find(x);
-        int fy = find(y);
-        if (fx == fy){
+    
+    private void union(int x, int y) {
+        
+        x = find(x);
+        y = find(y);
+        if (x == y) 
             return;
-        }
-        if (size[fx] > size[fy]) {
-            int temp = fx;
-            fx = fy;
-            fy = temp;
-        }
-        dsu[fx] = fy;
-        size[fy] += size[fx];
+
+        parent[y] = x;
     }
 }
