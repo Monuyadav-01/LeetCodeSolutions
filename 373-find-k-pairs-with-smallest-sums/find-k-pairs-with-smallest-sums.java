@@ -1,33 +1,64 @@
 class Solution {
+
     public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
-        int m = nums1.length;
-        int n = nums2.length;
-
-        List<List<Integer>> ans = new ArrayList<>();
-        Set<Pair<Integer, Integer>> visited = new HashSet<>();
-
-        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b)->(a[0] - b[0]));
-        minHeap.offer(new int[]{nums1[0] + nums2[0], 0, 0});
-        visited.add(new Pair<Integer, Integer>(0, 0));
-
-        while (k-- > 0 && !minHeap.isEmpty()) {
-            int[] top = minHeap.poll();
-            int i = top[1];
-            int j = top[2];
-
-            ans.add(List.of(nums1[i], nums2[j]));
-
-            if (i + 1 < m && !visited.contains(new Pair<Integer, Integer>(i + 1, j))) {
-                minHeap.offer(new int[]{nums1[i + 1] + nums2[j], i + 1, j});
-                visited.add(new Pair<Integer, Integer>(i + 1, j));
-            }
-
-            if (j + 1 < n && !visited.contains(new Pair<Integer, Integer>(i, j + 1))) {
-                minHeap.offer(new int[]{nums1[i] + nums2[j + 1], i, j + 1});
-                visited.add(new Pair<Integer, Integer>(i, j + 1));
+        int smallest = nums1[0] + nums2[0];
+        int largest = nums1[nums1.length - 1] + nums2[nums2.length - 1];
+        while(smallest < largest) {
+            int midVal = smallest + (largest - smallest) / 2;
+            int smallerOrEqCount = getSmallerOrEqCount(nums1, nums2, k, midVal);
+            if(smallerOrEqCount == k) {
+                smallest = midVal;
+                break;
+            } else if(smallerOrEqCount > k){
+                largest = midVal;
+            } else {
+                smallest = midVal + 1;
             }
         }
+        return generateResult(nums1, nums2, smallest, k);
+    }
 
-        return ans;
+    public int getSmallerOrEqCount(int[] nums1, int[] nums2, int k, int val) {
+        int smallerOrEqCount = 0;
+        for(int i = 0; i < nums1.length && nums1[i] + nums2[0] <= val && smallerOrEqCount <= k; i ++) {
+            smallerOrEqCount += firstLargerIndex(nums2, val - nums1[i]);
+        }
+        return smallerOrEqCount;
+    }
+
+    public int firstLargerIndex(int[] nums, int target) {
+        int start = 0;
+        int end = nums.length - 1;
+        while(start < end) {
+            int mid = start + (end - start) / 2;
+            if(nums[mid] <= target) {
+                start = mid + 1;
+            } else {
+                end = mid;
+            }
+        }
+        return nums[start] <= target ? start + 1 : start;
+    }
+
+    public List<List<Integer>> generateResult(int[] nums1, int[] nums2, int max, int k) {
+        List<List<Integer>> result = new ArrayList<>();
+        List<List<Integer>> eq = new ArrayList<>();
+        // int eqCount = 0;
+        for(int i = 0; i < nums1.length && k > 0; i ++) {
+            for(int j = 0; j < nums2.length && (nums1[i] + nums2[j] < max) && k > 0; j ++) {
+                    result.add(Arrays.asList(nums1[i], nums2[j]));
+                    k --;
+            }
+        }
+        
+        for(int i = 0; i < nums1.length && k > 0; i ++) {
+            for(int j = 0; j < nums2.length && (nums1[i] + nums2[j] <= max) && k > 0; j ++) {
+                if(nums1[i] + nums2[j] == max) {
+                    result.add(Arrays.asList(nums1[i], nums2[j]));
+                    k --;
+                }
+            }
+        }
+        return result;
     }
 }
