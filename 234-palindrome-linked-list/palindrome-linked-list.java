@@ -8,28 +8,23 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
+import java.util.*;
 class Solution {
     public boolean isPalindrome(ListNode head) {
-        ListNode slow = head, fast = head, prev, temp;
-        while (fast != null && fast.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
+       
+        ArrayList<Integer>arr=new ArrayList<>();
+        while(head!=null){
+            arr.add(head.val);
+            head=head.next;
         }
-        prev = slow;
-        slow = slow.next;
-        prev.next = null;
-        while (slow != null) {
-            temp = slow.next;
-            slow.next = prev;
-            prev = slow;
-            slow = temp;
-        }
-        fast = head;
-        slow = prev;
-        while (slow != null) {
-            if (fast.val != slow.val) return false;
-            fast = fast.next;
-            slow = slow.next;
+        int start=0;
+        int end=arr.size()-1;
+        while(start<end){
+            if(arr.get(start)!=arr.get(end)){
+                return false;
+            }
+            start++;
+            end--;
         }
         return true;
     }
