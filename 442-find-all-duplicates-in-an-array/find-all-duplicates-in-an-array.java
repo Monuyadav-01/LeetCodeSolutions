@@ -1,13 +1,16 @@
 class Solution {
     public List<Integer> findDuplicates(int[] nums) {
-       HashSet<Integer> set = new HashSet<>();
-       List<Integer> list = new ArrayList<>();
-       for(int i : nums){
-            if(set.contains(i)){
-                list.add(i);
+        List<Integer> result = new ArrayList<>();
+        
+        for (int num : nums) {
+            int index = Math.abs(num) - 1; // map num to index
+            if (nums[index] < 0) {
+                result.add(Math.abs(num)); // duplicate found
+            } else {
+                nums[index] = -nums[index]; // mark as visited
             }
-            set.add(i);
-       }
-       return list;
+        }
+        
+        return result;
     }
 }
